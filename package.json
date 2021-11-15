@@ -1,0 +1,31 @@
+{
+    "name": "@rbxts/ping",
+    "description": "Dead simple roblox-ts bindable event wrapper.",
+    "version": "1.0.0",
+    "main": "out/init.lua",
+    "license": "MIT",
+    "scripts": {
+        "build": "rbxtsc",
+        "watch": "rbxtsc -w",
+        "prepublishOnly": "yarn run build"
+    },
+    "types": "out/index.d.ts",
+    "files": [
+        "out/**/!(*.spec|*.server).(lua|d.ts)"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "keywords": [
+        "roblox",
+        "roblox-ts",
+        "rbxts",
+        "signal",
+        "bindable",
+        "event"
+    ],
+    "devDependencies": {
+        "@rbxts/compiler-types": "^1.2.7-types.0",
+        "@rbxts/types": "^1.0.551"
+    }
+}
