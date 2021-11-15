@@ -9,6 +9,13 @@
         "watch": "rbxtsc -w",
         "prepublishOnly": "yarn run build"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/zyrakia/ping"
+    },
+    "bugs": {
+        "url": "https://github.com/zyrakia/ping/issues"
+    },
     "types": "out/index.d.ts",
     "files": [
         "out/**/!(*.spec|*.server).(lua|d.ts)"
