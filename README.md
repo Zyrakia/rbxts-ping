@@ -1,6 +1,6 @@
 # Ping
 
-Yet another super simple bindable event wrapper which uses ✨`camelCase`✨ and allows connection via a encapsulateed `connector` or with the `connect` function.
+Yet another super simple bindable event wrapper which uses ✨`camelCase`✨ and allows connection via a encapsulated `connector` or with the `connect` function.
 
 ## Example
 
