@@ -4,7 +4,7 @@ Yet another super simple bindable event wrapper which uses ✨`camelCase`✨ and
 
 ## Example
 
-A deadsimple example, there isn't much to this library.
+A simple example, there isn't much to this library.
 
 ```ts
 interface PlayerData {
