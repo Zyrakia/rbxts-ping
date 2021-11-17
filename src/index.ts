@@ -18,17 +18,31 @@ export class Ping<Handler extends Callback = () => void> {
 }
 
 class PingConnector<Handler extends Callback> {
-	public constructor(private event: BindableEvent) {}
+	public constructor(private event: BindableEvent<Handler>) {}
 
 	public connect(handler: Handler) {
-		return this.event.Event.Connect(handler) as RBXScriptConnection;
+		const conn = this.event.Event.Connect(handler);
+		return new PingConnection(conn);
 	}
 
 	public connectParallel(handler: Handler) {
-		return this.event.Event.ConnectParallel(handler);
+		const conn = this.event.Event.ConnectParallel(handler);
+		return new PingConnection(conn);
 	}
 
 	public wait() {
-		return this.event.Event.Wait();
+		return this.event.Event.Wait()[0] as Parameters<Handler>;
+	}
+}
+
+class PingConnection {
+	public constructor(private connection: RBXScriptConnection) {}
+
+	public disconnect() {
+		this.connection.Disconnect();
+	}
+
+	public isConnected() {
+		return this.connection.Connected;
 	}
 }
