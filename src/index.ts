@@ -42,6 +42,10 @@ class PingConnection {
 		this.connection.Disconnect();
 	}
 
+	public destroy() {
+		this.connection.Disconnect();
+	}
+
 	public isConnected() {
 		return this.connection.Connected;
 	}
