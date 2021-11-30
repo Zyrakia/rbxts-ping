@@ -24,6 +24,14 @@ export class Ping<Handler extends Callback = () => void> {
 	}
 
 	/**
+	 * Yield until the next time the ping is fired.
+	 * Alias for {@link PingConnector.wait}.
+	 */
+	public wait() {
+		return this.connector.wait();
+	}
+
+	/**
 	 * Destroys the ping and disconnects all connections.
 	 */
 	public destroy() {
