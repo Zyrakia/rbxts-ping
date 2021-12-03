@@ -1,26 +1,30 @@
 # Ping
 
-Yet another super simple bindable event wrapper which uses ✨`camelCase`✨ and allows connection via a encapsulated `connector` or with the `connect` function.
+Yet another super simple bindable event wrapper which uses ✨`camelCase`✨ and allows connection directly or via an encapsulated `connector`, which is useful for replicating the behaviour of regular Roblox signals.
 
 ## Example
 
 A simple example, there isn't much to this library.
 
 ```ts
-interface PlayerData {
-	level: number;
-}
+class PingExample {
+	// Both of these work!
+	private ping = new Ping<(player: Player) => void>();
+	private ping = new Ping<[player: Player]>();
 
-class PlayerDataService {
-	private ping = new Ping<(player: Player, data: PlayerData) => void>();
-	public readonly onDataUpdated = this.ping.connector;
+	// Open up the API to connect to the ping externally
+	public readonly onPing = this.ping.connector;
 
-	public update(player: Player, data: PlayerData) {
-		this.ping.fire(player, data);
+	private foo(player: Player) {
+		// Alerts all connections
+		this.ping.fire(player);
 	}
 }
 
-new PlayerDataService().onDataUpdated.connect((player, data) => {
-	print(`Player data updated for ${player.Name}, new data: ${data}.`);
+const example = new PingExample();
+
+// To any external users, only .connect, .connectParallel and .wait are available.
+example.onPing.connect((player) => {
+	print(player);
 });
 ```
