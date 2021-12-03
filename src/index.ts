@@ -1,6 +1,15 @@
-type Callback = (...args: any[]) => void;
+type Args = any[];
+type Callback = (...args: Args) => void;
 
-export class Ping<Handler extends Callback = () => void> {
+type ParseHandler<T> = T extends Callback
+	? ReturnType<T> extends void
+		? T
+		: (...args: Parameters<T>) => void
+	: T extends Args
+	? (...args: T) => void
+	: never;
+
+export class Ping<Handler extends Callback | Args = []> {
 	private event = new Instance('BindableEvent');
 	public readonly connector = new PingConnector<Handler>(this.event);
 
@@ -9,7 +18,7 @@ export class Ping<Handler extends Callback = () => void> {
 	 *
 	 * @param args The arguments to pass to any connections.
 	 */
-	public fire(...args: Parameters<Handler>) {
+	public fire(...args: Parameters<ParseHandler<Handler>>) {
 		this.event.Fire(...(args as unknown[]));
 	}
 
@@ -19,7 +28,7 @@ export class Ping<Handler extends Callback = () => void> {
 	 * @param handler The handler to call when the ping is fired.
 	 * @returns The connection object.
 	 */
-	public connect(handler: Handler) {
+	public connect(handler: ParseHandler<Handler>) {
 		return this.connector.connect(handler);
 	}
 
@@ -39,8 +48,8 @@ export class Ping<Handler extends Callback = () => void> {
 	}
 }
 
-export class PingConnector<Handler extends Callback> {
-	public constructor(private event: BindableEvent<Handler>) {}
+export class PingConnector<Handler extends Callback | Args> {
+	public constructor(private event: BindableEvent<ParseHandler<Handler>>) {}
 
 	/**
 	 * Connect to the ping.
@@ -48,7 +57,7 @@ export class PingConnector<Handler extends Callback> {
 	 * @param handler The handler to call when the ping is fired.
 	 * @returns The connection object.
 	 */
-	public connect(handler: Handler) {
+	public connect(handler: ParseHandler<Handler>) {
 		const conn = this.event.Event.Connect(handler);
 		return new PingConnection(conn);
 	}
@@ -59,7 +68,7 @@ export class PingConnector<Handler extends Callback> {
 	 * @param handler The handler to call when the ping is fired.
 	 * @returns The connection object.
 	 */
-	public connectParallel(handler: Handler) {
+	public connectParallel(handler: ParseHandler<Handler>) {
 		const conn = this.event.Event.ConnectParallel(handler);
 		return new PingConnection(conn);
 	}
@@ -70,7 +79,7 @@ export class PingConnector<Handler extends Callback> {
 	 * @returns The arguments passed to the ping.
 	 */
 	public wait() {
-		return this.event.Event.Wait()[0] as Parameters<Handler>;
+		return this.event.Event.Wait()[0] as Parameters<ParseHandler<Handler>>;
 	}
 }
 
