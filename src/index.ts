@@ -10,8 +10,11 @@ type ParseHandler<T> = T extends Callback
 	: never;
 
 export class Ping<Handler extends Callback | Args = []> {
-	private event = new Instance('BindableEvent');
-	public readonly connector = new PingConnector<Handler>(this.event);
+	public readonly connector: PingConnector<Handler>;
+
+	public constructor(private event = new Instance('BindableEvent')) {
+		this.connector = new PingConnector<Handler>(this.event);
+	}
 
 	/**
 	 * Fire the ping and alert all connections.
