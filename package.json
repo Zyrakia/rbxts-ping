@@ -1,7 +1,7 @@
 {
 	"name": "@rbxts/ping",
 	"description": "Dead simple roblox-ts bindable event wrapper.",
-	"version": "2.4.5",
+	"version": "2.4.6",
 	"main": "out/init.lua",
 	"license": "MIT",
 	"scripts": {
@@ -18,7 +18,8 @@
 	},
 	"types": "out/index.d.ts",
 	"files": [
-		"out/**/!(*.spec|*.server).(lua|d.ts)"
+		"out/**/*.lua",
+		"out/**/*.d.ts"
 	],
 	"publishConfig": {
 		"access": "public"

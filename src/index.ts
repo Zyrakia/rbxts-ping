@@ -1,6 +1,6 @@
-type Callback = (...args: any[]) => unknown;
+type Callback = (...args: unknown[]) => unknown;
 
-type PingParams<T> = T extends any[] ? T : T extends Callback ? Parameters<T> : [T];
+type PingParams<T> = T extends unknown[] ? T : T extends Callback ? Parameters<T> : [T];
 type PingHandler<T> = (...args: PingParams<T>) => unknown;
 
 export class Ping<T = []> {
