@@ -1,20 +1,13 @@
-type Args = any[];
-type Callback = (...args: Args) => void;
-type HandlerType = Args | Callback | defined;
+type Callback = (...args: any[]) => unknown;
 
-type ParseHandler<T extends HandlerType> = T extends Args
-	? (...args: T) => void
-	: T extends Callback
-	? ReturnType<T> extends void
-		? T
-		: (...args: Parameters<T>) => void
-	: (argument: T) => void;
+type PingParams<T> = T extends any[] ? T : T extends Callback ? Parameters<T> : [T];
+type PingHandler<T> = (...args: PingParams<T>) => unknown;
 
-export class Ping<Handler extends HandlerType = []> {
-	public readonly connector: PingConnector<Handler>;
+export class Ping<T = []> {
+	public readonly connector: PingConnector<T>;
 
 	public constructor(private event = new Instance('BindableEvent')) {
-		this.connector = new PingConnector<Handler>(this.event);
+		this.connector = new PingConnector<T>(this.event);
 	}
 
 	/**
@@ -22,7 +15,7 @@ export class Ping<Handler extends HandlerType = []> {
 	 *
 	 * @param args The arguments to pass to any connections.
 	 */
-	public fire(...args: Parameters<ParseHandler<Handler>>) {
+	public fire(...args: Parameters<PingHandler<T>>) {
 		this.event.Fire(...args);
 	}
 
@@ -31,7 +24,7 @@ export class Ping<Handler extends HandlerType = []> {
 	 *
 	 * @param args The arguments to pass to any connections.
 	 */
-	public fireAsync(...args: Parameters<ParseHandler<Handler>>) {
+	public fireAsync(...args: Parameters<PingHandler<T>>) {
 		task.spawn(() => this.event.Fire(...args));
 	}
 
@@ -41,8 +34,28 @@ export class Ping<Handler extends HandlerType = []> {
 	 * @param handler The handler to call when the ping is fired.
 	 * @returns The connection object.
 	 */
-	public connect(handler: ParseHandler<Handler>) {
+	public connect(handler: PingHandler<T>) {
 		return this.connector.connect(handler);
+	}
+
+	/**
+	 * Creates a connection that automatically disconnects after
+	 * the ping is fired once.
+	 *
+	 * @param handler The handler to call when the ping is fired.
+	 * @returns The connection object.
+	 */
+	public once(handler: PingHandler<T>) {
+		let done = false;
+
+		const conn = this.connector.connect((...args) => {
+			if (done) return;
+
+			done = true;
+			conn.disconnect();
+
+			handler(...args);
+		});
 	}
 
 	/**
@@ -61,8 +74,8 @@ export class Ping<Handler extends HandlerType = []> {
 	}
 }
 
-export class PingConnector<Handler extends HandlerType> {
-	public constructor(private event: BindableEvent<ParseHandler<Handler>>) {}
+export class PingConnector<T> {
+	public constructor(private event: BindableEvent<PingHandler<T>>) {}
 
 	/**
 	 * Connect a callback to the ping that will get called
@@ -71,7 +84,7 @@ export class PingConnector<Handler extends HandlerType> {
 	 * @param handler The handler to call when the ping is fired.
 	 * @returns The connection object.
 	 */
-	public connect(handler: ParseHandler<Handler>) {
+	public connect(handler: PingHandler<T>) {
 		const conn = this.event.Event.Connect(handler);
 		return new PingConnection(conn);
 	}
@@ -83,7 +96,7 @@ export class PingConnector<Handler extends HandlerType> {
 	 * @param handler The handler to call when the ping is fired.
 	 * @returns The connection object.
 	 */
-	public connectParallel(handler: ParseHandler<Handler>) {
+	public connectParallel(handler: PingHandler<T>) {
 		const conn = this.event.Event.ConnectParallel(handler);
 		return new PingConnection(conn);
 	}
@@ -94,7 +107,7 @@ export class PingConnector<Handler extends HandlerType> {
 	 * @returns The arguments passed when the ping was fired.
 	 */
 	public wait() {
-		return this.event.Event.Wait()[0] as Parameters<ParseHandler<Handler>>;
+		return this.event.Event.Wait()[0] as Parameters<PingHandler<T>>;
 	}
 }
 
