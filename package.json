@@ -11,10 +11,10 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/zyrakia/ping"
+		"url": "https://github.com/zyrakia/rbxts-ping"
 	},
 	"bugs": {
-		"url": "https://github.com/zyrakia/ping/issues"
+		"url": "https://github.com/zyrakia/rbxts-ping/issues"
 	},
 	"types": "out/index.d.ts",
 	"files": [
