@@ -1,7 +1,7 @@
 {
 	"name": "@rbxts/ping",
 	"description": "Dead simple roblox-ts bindable event wrapper.",
-	"version": "2.4.6",
+	"version": "2.4.7",
 	"main": "out/init.lua",
 	"license": "MIT",
 	"scripts": {
